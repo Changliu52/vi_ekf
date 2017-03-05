@@ -1,3 +1,5 @@
+***VISUAL-INERTIAL SENSOR FUSION FRAMEWORK***
+
 **DISCLAMER:**
 
 This ros package was developed to be used as a sensor fusion framework for the state estimation of robots, drones or VR/AR headsets.
