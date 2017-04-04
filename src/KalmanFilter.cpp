@@ -8,7 +8,7 @@
   KalmanFilter10::KalmanFilter10(double n_s, double n_lamda, double n_b):
 	delayed_imu_readings_(2), // vision has about 0.01ms delay, 180Hz imu update (0.0056), 0.01*180 = 1.8
 	init_lambda(2.0),
-	init_lambda_uncer(1.5), //0.25
+	init_lambda_uncer(2.0), //1.5
         reset_exposure(0),
 	T(1.0/180.0) // imu update time interval
   {

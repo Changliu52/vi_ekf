@@ -103,10 +103,10 @@ void ExposureCallback(const geometry_msgs::TransformStamped::ConstPtr& msgin,
 		  KalmanFilter10& mainFilter)
 {
   if(mainFilter.reset_exposure == 0 && msgin->header.frame_id == "Exposure") {
-    system("rosrun dynamic_reconfigure dynparam set /ueye_cam_nodelet lock_exposure false");  
+    system("rosrun dynamic_reconfigure dynparam set ueye_cam_nodelet lock_exposure false");  
     mainFilter.reset_exposure = 1;
   } else if (mainFilter.reset_exposure == 1 && msgin->header.frame_id == "Teensy") {
-    system("rosrun dynamic_reconfigure dynparam set /ueye_cam_nodelet lock_exposure true");
+    system("rosrun dynamic_reconfigure dynparam set ueye_cam_nodelet lock_exposure true");
     mainFilter.reset_exposure = 0;
   }	  
 }
@@ -228,27 +228,27 @@ int main(int argc, char **argv)
 
   // Publishers init
   tf::TransformBroadcaster imuPublisher;
-  ros::Publisher           imuIndicator	      = n.advertise<visualization_msgs::Marker>("/vi/imu/marker", 100);
+  ros::Publisher           imuIndicator	      = n.advertise<visualization_msgs::Marker>("vi/imu/marker", 100);
   tf::TransformBroadcaster visPublisher;
-  ros::Publisher           visIndicator	      = n.advertise<visualization_msgs::Marker>("/vi/svo/marker", 100);
+  ros::Publisher           visIndicator	      = n.advertise<visualization_msgs::Marker>("vi/svo/marker", 100);
 
   //ros::Publisher         ekfPublisher_q     = n.advertise<geometry_msgs::Quaternion> ("/ekf/q", 2);
   //ros::Publisher	   ekfPublisher_p     = n.advertise<geometry_msgs::Vector3> ("/ekf/p", 2);
   //ros::Publisher	   ekfPublisher_v     = n.advertise<geometry_msgs::Vector3> ("/ekf/v", 2);
   //ros::Publisher	   ekfPublisher_b     = n.advertise<geometry_msgs::Vector3> ("/ekf/b", 2);
   //ros::Publisher	   ekfPublisher_lamda = n.advertise<std_msgs::Float64>      ("/ekf/lamda", 2);
-  ros::Publisher         ekfPublisher = n.advertise<vi_ekf::teensyPilot> ("/ekf/output", 1);
+  ros::Publisher         ekfPublisher = n.advertise<vi_ekf::teensyPilot> ("ekf/output", 1);
   
-  ros::Publisher           resetPublisher     = n.advertise<geometry_msgs::TransformStamped>("/Allreset",10);
+  ros::Publisher           resetPublisher     = n.advertise<geometry_msgs::TransformStamped>("Allreset",10);
   //ros::Publisher           mValidPublisher    = n.advertise<std_msgs::Int8>                 ("/ekf/safeout",100);
-  ros::Publisher           iValidPublisher    = n.advertise<geometry_msgs::Vector3>         ("/ekf/safeoutVec",100);
+  ros::Publisher           iValidPublisher    = n.advertise<geometry_msgs::Vector3>         ("ekf/safeoutVec",100);
 
   // Initiate safe guard
   ValidationGuard guard(&kalmanFilter, &resetPublisher, &iValidPublisher);
   
   
   // Subscribers init
-  ros::Subscriber imuSub = n.subscribe<geometry_msgs::TransformStamped>  ("/teensy/imu", 1, boost::bind(IMUCallback,
+  ros::Subscriber imuSub = n.subscribe<geometry_msgs::TransformStamped>  ("teensy/imu", 1, boost::bind(IMUCallback,
 										              _1,
 											      boost::ref(imuPublisher),
 											      boost::ref(imuIndicator),
@@ -257,29 +257,29 @@ int main(int argc, char **argv)
 											      boost::ref(guard),
 											      boost::ref(ekfPublisher)));
 											      
-  ros::Subscriber exposureSub = n.subscribe<geometry_msgs::TransformStamped>  ("/teensy/imu", 1, boost::bind(ExposureCallback,
+  ros::Subscriber exposureSub = n.subscribe<geometry_msgs::TransformStamped>  ("teensy/imu", 1, boost::bind(ExposureCallback,
 										              _1,
 											      boost::ref(imuPublisher),
 											      boost::ref(imuIndicator),
 											      boost::ref(kalmanFilter)));
 											      
-  ros::Subscriber visSub = n.subscribe<geometry_msgs::PoseWithCovarianceStamped>("/svo/pose",  1, boost::bind(VISCallback,
+  ros::Subscriber visSub = n.subscribe<geometry_msgs::PoseWithCovarianceStamped>("svo/pose",  1, boost::bind(VISCallback,
 												    _1,
 												    boost::ref(visPublisher),
 												    boost::ref(visIndicator),
 												    boost::ref(kalmanFilter)));
-  ros::Subscriber resSub = n.subscribe<geometry_msgs::TransformStamped>("/Allreset",  10, boost::bind(resetCallback,
+  ros::Subscriber resSub = n.subscribe<geometry_msgs::TransformStamped>("Allreset",  10, boost::bind(resetCallback,
   											_1,
   											boost::ref(kalmanFilter),
 											boost::ref(guard)));
 											
-  ros::Subscriber resSub_ros = n.subscribe< std_msgs::Bool>("/svo/usereset",  10, boost::bind(SVOresetCallback,
+  ros::Subscriber resSub_ros = n.subscribe< std_msgs::Bool>("svo/usereset",  10, boost::bind(SVOresetCallback,
   											_1,
   											boost::ref(kalmanFilter),
 											boost::ref(resetPublisher),
 											boost::ref(q)));
   // for the validation guard
-  guard.sub_svo_info_ = n.subscribe("/svo/info",   1,  &ValidationGuard::svo_info_Cb, &guard);
+  guard.sub_svo_info_ = n.subscribe("svo/info",   1,  &ValidationGuard::svo_info_Cb, &guard);
   
   
   

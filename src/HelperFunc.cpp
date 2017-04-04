@@ -8,7 +8,7 @@ void q_mult(double* q1, double* q2, double* q3)
   q3[0] = q1[0]*q2[0] - q1[1]*q2[1] - q1[2]*q2[2] - q1[3]*q2[3];
 }
 
-void QuatRot(double *vec, double *q, double *newVec) 
+void QuatRot(double *vec, double *q, double *newVec) // expecting vec is a 4d vector {0, x, y, z}
 {
   double q_conj[4];
   q_conj[0] =  q[0];
