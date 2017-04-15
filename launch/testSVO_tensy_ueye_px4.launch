@@ -1,0 +1,90 @@
+<launch>
+  <arg name="nodelet_manager_name" value="nodelet_manager" />
+  <arg name="camera_name" value="camera" />
+
+<node ns="$(env ROS_SYSTEM)" pkg="nodelet" type="nodelet" name="$(arg nodelet_manager_name)" args="manager"  launch-prefix="taskset -c 4"/>
+  
+<node ns="$(env ROS_SYSTEM)" pkg="nodelet" type="nodelet" name="ueye_cam_nodelet" args="load ueye_cam/ueye_cam_nodelet $(arg nodelet_manager_name)" launch-prefix="taskset -c 4">
+        
+    <param name="camera_name" type="str" value="$(arg camera_name)" /> <!-- == namespace for topics and services -->
+    <param name="camera_topic" type="str" value="image_raw" />
+    <param name="camera_id" type="int" value="0" /> <!-- 0 = any camera; 1+: camera ID -->
+
+    <param name="ext_trigger_mode" type="bool" value="False" />
+    <param name="color_mode" type="str" value="mono8" /> <!-- valid options: 'rgb8', 'mono8', 'bayer_rggb8' -->
+
+    <param name="image_width" type="int" value="752" />
+    <param name="image_height" type="int" value="480" />
+
+    <param name="auto_gain" type="bool" value="False" />
+    <param name="master_gain" type="int" value="0" />
+    <param name="gain_boost" type="bool" value="False" />
+
+    <param name="auto_exposure" type="bool" value="False" />
+    <param name="exposure" type="int" value="2" />  <!-- in ms -->
+
+    <param name="auto_frame_rate" type="bool" value="False" />
+    <param name="frame_rate" type="double" value="50.0" />
+    
+
+</node>
+ 
+ 
+<node ns="$(env ROS_SYSTEM)" pkg="svo_ros" type="vo" name="svo" clear_params="true"  launch-prefix="taskset -c 4">
+        <param name="cam_topic" value="camera/image_raw" type="str" />
+        <rosparam file="$(find svo_ros)/param/ueyeIR_atan.yaml" />
+        <rosparam file="$(find svo_ros)/param/vo_mine.yaml" />
+	<param name="accept_console_user_input" value="true" />
+	<param name="publish_world_in_cam_frame" value="false" />
+	<param name="init_rx" value="3.14159265" />
+</node>
+
+<node ns="$(env ROS_SYSTEM)" name="vi_fusor" pkg="vi_ekf" type="vi_ekf"  launch-prefix="taskset -c 2">
+</node>
+
+<node ns="$(env ROS_SYSTEM)" name="TeensyPilot" pkg="rosserial_python" type="serial_node.py" launch-prefix="taskset -c 2">
+	<param name="port" value="/dev/ttyACM0" />
+	<param name="baud" value="115200" />
+</node>
+
+<node ns="$(env ROS_SYSTEM)" name="px4handlerNode" pkg="px4handler" type="px4handler_node" output="screen">
+
+</node>
+
+<!-- vim: set ft=xml noet : -->
+<!-- example launch script for PX4 based FCU's -->
+<arg name="fcu_url" default="/dev/ttyUSB0:921600" />
+<arg name="gcs_url" default="" />
+<arg name="tgt_system" default="1" />
+<arg name="tgt_component" default="1" />
+<arg name="log_output" default="screen" />
+	
+<node ns="$(env ROS_SYSTEM)" pkg="mavros" type="mavros_node" name="mavros" required="true" clear_params="true" output="$(arg log_output)">
+	<param name="fcu_url" value="$(arg fcu_url)" />
+	<param name="gcs_url" value="$(arg gcs_url)" />
+	<param name="target_system_id" value="$(arg tgt_system)" />
+	<param name="target_component_id" value="$(arg tgt_component)" />
+
+	<!-- load blacklist, config -->
+	<rosparam command="load" file="$(find mavros)/launch/px4_pluginlists.yaml" />
+	<rosparam command="load" file="$(find mavros)/launch/px4_config.yaml" />
+</node>
+
+        <arg name="marker_size" default="22.55" />
+	<arg name="max_new_marker_error" default="0.08" />
+	<arg name="max_track_error" default="0.2" />
+	<arg name="cam_image_topic" default="camera/image_raw" />
+	<arg name="cam_info_topic" default="camera/camera_info" />
+	<arg name="output_frame" default="camera" />
+
+	<node ns="$(env ROS_SYSTEM)" name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" launch-prefix="taskset -c 5" output="screen">
+		<param name="marker_size"           type="double" value="$(arg marker_size)" />
+		<param name="max_new_marker_error"  type="double" value="$(arg max_new_marker_error)" />
+		<param name="max_track_error"       type="double" value="$(arg max_track_error)" />
+		<param name="output_frame"          type="string" value="$(arg output_frame)" />
+
+		<remap from="camera_image"  to="$(arg cam_image_topic)" />
+		<remap from="camera_info"   to="$(arg cam_info_topic)" />
+	</node>
+
+</launch>
