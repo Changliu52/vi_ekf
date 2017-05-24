@@ -14,12 +14,17 @@ Related publications:
 	Computationally efficient visual-inertial sensor fusion for Global Positioning System-denied navigation on a small quadrotor (http://doi.org/10.1177/1687814016640996)
 
 Some test quadrotor flight running the packages in the onboard Odroid U3 and Odroid XU4 has been recorded in Youtube:
-https://youtu.be/1TrFu_Ctv0s?list=PLIAB0d1xJQQ6Q7A-8muH41tBeMel9w_V7;
-https://youtu.be/yl_cu3SLcu0?list=PLIAB0d1xJQQ6Q7A-8muH41tBeMel9w_V7;
-https://youtu.be/F8lnu_FbV44?list=PLIAB0d1xJQQ6Q7A-8muH41tBeMel9w_V7;
-https://youtu.be/IICqtjW25MQ?list=PLIAB0d1xJQQ6Q7A-8muH41tBeMel9w_V7;
-https://youtu.be/WMEQ7CppB0E?list=PLIAB0d1xJQQ6Q7A-8muH41tBeMel9w_V7;
-https://youtu.be/R7FX-kKlSRg?list=PLIAB0d1xJQQ6Q7A-8muH41tBeMel9w_V7;
+https://youtu.be/1TrFu_Ctv0s?list=PLIAB0d1xJQQ6Q7A-8muH41tBeMel9w_V7
+
+https://youtu.be/yl_cu3SLcu0?list=PLIAB0d1xJQQ6Q7A-8muH41tBeMel9w_V7
+
+https://youtu.be/F8lnu_FbV44?list=PLIAB0d1xJQQ6Q7A-8muH41tBeMel9w_V7
+
+https://youtu.be/IICqtjW25MQ?list=PLIAB0d1xJQQ6Q7A-8muH41tBeMel9w_V7
+
+https://youtu.be/WMEQ7CppB0E?list=PLIAB0d1xJQQ6Q7A-8muH41tBeMel9w_V7
+
+https://youtu.be/R7FX-kKlSRg?list=PLIAB0d1xJQQ6Q7A-8muH41tBeMel9w_V7
 
 Copyright (c) 2016, Chang Liu Chang.liu52@icloud.com. for commercial use please contact him.
 
